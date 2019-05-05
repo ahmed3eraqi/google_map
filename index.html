@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html,
+        body,
+        #map_canvas {
+            margin: 0;
+            padding: 0;
+            height: 100%
+        }
+    </style>
+</head>
+
+<body>
+    <h2> google map </h2>
+
+    <h3></h3>
+    <input type="text" id="address" size="30"><br>
+    <input type="text" id="lat" size="10">
+    <input type="text" id="lng" size="10">
+    <div id="map_canvas"></div>
+    <div id="map" style="width: 1000px;height: 500px;"></div>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCM-mRZNCFuVc9NL4VYCuh4Nmy84bxTwmM&callback=initMap"
+        type="text/javascript"></script>
+
+
+
+    <script>
+        var map;
+        var geocoder;
+        var mapOptions = {
+            center: { lat: 24.6319692, lng: 46.7150648 }
+            // center: new google.maps.LatLng(0.0, 0.0), zoom: 2,
+            // mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+        function initMap() {
+            var myOptions = {
+                center: { lat: 24.6319692, lng: 46.7150648 },
+                zoom: 6,
+                // mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            geocoder = new google.maps.Geocoder();
+            var map = new google.maps.Map(document.getElementById("map_canvas"),
+                myOptions);
+            google.maps.event.addListener(map, 'click', function (event) {
+                placeMarker(event.latLng);
+            });
+
+            var marker;
+            function placeMarker(location) {
+                if (marker) { //on vérifie si le marqueur existe
+                    marker.setPosition(location); //on change sa position
+                } else {
+                    marker = new google.maps.Marker({ //on créé le marqueur
+                        position: location,
+                        map: map
+                    });
+                }
+                document.getElementById('lat').value = location.lat();
+                document.getElementById('lng').value = location.lng();
+                getAddress(location);
+            }
+
+            function getAddress(latLng) {
+                geocoder.geocode({ 'latLng': latLng },
+                    function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            if (results[0]) {
+                                document.getElementById("address").value = results[0].formatted_address;
+                            }
+                            else {
+                                document.getElementById("address").value = "No results";
+                            }
+                        }
+                        else {
+                            document.getElementById("address").value = status;
+                        }
+                    });
+            }
+
+        }
+
+    </script>
+</body>
+
+</html>
